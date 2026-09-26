@@ -19,6 +19,7 @@ languages:
   - "en"
 default_lang: "gr"
 exclude_from_localization:
+  - "sitemap.xml"
   - "assets"
   - "admin"
   - "scripts"
@@ -34,6 +35,7 @@ exclude_from_localization:
   - "README.md"
   - "LICENSE"
   - "ASSET_RIGHTS.md"
+  - "DEPENDENCY_UPDATES.md"
 parallel_localization: false
 defaults:
   - scope:
@@ -42,6 +44,7 @@ defaults:
       sitemap: false
 exclude:
   - ".idea/"
+  - "scripts/"
   - "node_modules/"
   - "cloudflare/"
   - "vendor/"
@@ -57,3 +60,4 @@ exclude:
   - "README.md"
   - "LICENSE"
   - "ASSET_RIGHTS.md"
+  - "DEPENDENCY_UPDATES.md"

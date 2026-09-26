@@ -3,7 +3,7 @@ layout: default
 title: "Therapy Cove"
 description: "Modern mental health center in Athens."
 lang: "en"
-permalink: /en/
+permalink: /
 page_id: home
 ---
 

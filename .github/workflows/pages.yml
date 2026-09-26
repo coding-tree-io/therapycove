@@ -15,31 +15,78 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  verify-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Install npm and dependencies
+        run: |
+          npm install --global npm@12.1.0
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm ci
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify generated CSS
+        run: |
+          npm run build:css
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git diff --exit-code -- assets/css/tailwind-build.css assets/css/site.bundle.css
+      - uses: ruby/setup-ruby@v1.327.0
+        with:
+          bundler-cache: true
+      - name: Build both site configurations
+        run: |
+          bundle exec jekyll build --config _config.yml,_config.local.yml
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          bundle exec jekyll build --config _config.yml
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm test -- https://www.therapycove.gr
+        env:
+          JEKYLL_ENV: production
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: actions/checkout@v7.0.1
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
         with:
-          ruby-version: "3.4.8"
+          node-version-file: .node-version
+          cache: npm
+      - name: Install npm
+        run: npm install --global npm@12.1.0
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Verify generated CSS
+        run: |
+          npm run build:css
+          git diff --exit-code -- assets/css/tailwind-build.css assets/css/site.bundle.css
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6.0.0
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1.327.0
+        with:
           bundler-cache: true
       - name: Build site for link check
-        run: bundle exec jekyll build --config _config.yml,_config.local.yml
+        run: |
+          bundle exec jekyll build --config _config.yml,_config.local.yml
+          npm test
         env:
           JEKYLL_ENV: production
       - name: Restore lychee cache
         id: restore-lychee-cache
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6.1.0
         with:
           path: _site/.lycheecache
           key: lychee-cache-${{ github.sha }}
           restore-keys: lychee-cache-
       - name: Check for broken links
-        uses: lycheeverse/lychee-action@v2
+        uses: lycheeverse/lychee-action@v2.9.0
         with:
           args: >
             --root-dir .
@@ -60,21 +107,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Save lychee cache
         if: always()
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6.1.0
         with:
           path: _site/.lycheecache
           key: ${{ steps.restore-lychee-cache.outputs.cache-primary-key }}
       - name: Build with Jekyll
-        run: bundle exec jekyll build --config _config.yml
+        run: |
+          bundle exec jekyll build --config _config.yml
+          npm test -- https://www.therapycove.gr
         env:
           JEKYLL_ENV: production
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: _site
 
   deploy:
-    needs: build
+    needs: [build, verify-windows]
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -82,4 +131,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5.0.1

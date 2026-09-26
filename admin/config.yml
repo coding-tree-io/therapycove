@@ -361,7 +361,7 @@ collections:
           - { label: Title, name: title, widget: string }
           - { label: Description, name: description, widget: text }
           - { label: Language, name: lang, widget: hidden, default: en }
-          - { label: Permalink, name: permalink, widget: hidden, default: /en/legal/ }
+          - { label: Permalink, name: permalink, widget: hidden, default: /legal/ }
           - { label: Page ID, name: page_id, widget: hidden, default: legal }
           - { label: Sitemap, name: sitemap, widget: hidden, default: true }
           - { label: Body, name: body, widget: markdown }

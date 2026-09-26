@@ -1,14 +1,4 @@
 module.exports = {
-  content: [
-    "./_includes/**/*.html",
-    "./_layouts/**/*.html",
-    "./index.md",
-    "./assets/js/**/*.js",
-    "./node_modules/flowbite/**/*.js"
-  ],
-  corePlugins: {
-    preflight: false
-  },
   theme: {
     extend: {
       colors: {

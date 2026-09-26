@@ -1,4 +1,12 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+/* Pico owns the reset; do not import Tailwind Preflight. */
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
 @config "../../tailwind.config.js";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@source "../../_includes";
+@source "../../_layouts";
+@source "../../index.md";
+@source "../../legal.md";
+@source "../../en/*.md";
+@source "../js";
+@source "../../node_modules/flowbite/**/*.js";

@@ -3,7 +3,7 @@ layout: legal
 title: "Privacy & Legal Notice"
 description: "Privacy notice, personal data processing information, and legal terms."
 lang: "en"
-permalink: /en/legal/
+permalink: /legal/
 page_id: legal
 sitemap: true
 ---

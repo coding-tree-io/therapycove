@@ -52,16 +52,12 @@ function Ensure-RubyOnPath {
     }
 
     $candidateBins = @(
+        "$env:SystemDrive\Ruby40-x64\bin",
+        "$env:SystemDrive\Ruby40\bin",
+        "$env:SystemDrive\Ruby34-x64\bin",
+        "$env:SystemDrive\Ruby34\bin",
         "$env:SystemDrive\Ruby33-x64\bin",
-        "$env:SystemDrive\Ruby33\bin",
-        "$env:SystemDrive\Ruby32-x64\bin",
-        "$env:SystemDrive\Ruby32\bin",
-        "$env:SystemDrive\Ruby31-x64\bin",
-        "$env:SystemDrive\Ruby31\bin",
-        "$env:SystemDrive\Ruby30-x64\bin",
-        "$env:SystemDrive\Ruby30\bin",
-        "$env:SystemDrive\Ruby27-x64\bin",
-        "$env:SystemDrive\Ruby27\bin"
+        "$env:SystemDrive\Ruby33\bin"
     )
 
     foreach ($bin in $candidateBins) {
@@ -149,30 +145,34 @@ function Ensure-Bundle {
 }
 
 function Start-DecapServer {
-    $npx = Get-Command "npx" -ErrorAction SilentlyContinue
-    if (-not $npx) {
-        Write-Warning "npx not found; skipping Decap local backend. Install Node.js to enable the CMS locally."
+    $decapScript = Join-Path $projectRoot "node_modules/decap-server/dist/index.js"
+    $node = Get-Command "node" -ErrorAction SilentlyContinue
+    if (-not $node -or -not (Test-Path $decapScript)) {
+        Write-Warning "Decap local backend unavailable. Install the documented Node.js version and run npm ci."
         return $null
     }
 
     try {
         if (Get-IsWindows) {
-            return Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "npx decap-server" -WorkingDirectory $projectRoot -NoNewWindow -PassThru -ErrorAction Stop
+            return Start-Process -FilePath $node.Source -ArgumentList ('"' + $decapScript + '"') -WorkingDirectory $projectRoot -WindowStyle Hidden -PassThru -ErrorAction Stop
         }
 
-        return Start-Process -FilePath "npx" -ArgumentList "decap-server" -WorkingDirectory $projectRoot -PassThru -ErrorAction Stop
+        return Start-Process -FilePath $node.Source -ArgumentList ('"' + $decapScript + '"') -WorkingDirectory $projectRoot -PassThru -ErrorAction Stop
     } catch {
         Write-Warning ("Failed to start the Decap local backend: " + $_.Exception.Message)
         return $null
     }
 }
 
+Ensure-Bundle
 $decap = Start-DecapServer
 
 try
 {
-    Ensure-Bundle
     bundle exec jekyll serve --config _config.yml,_config.local.yml
+    if ($LASTEXITCODE -ne 0) {
+        throw "Jekyll failed. Review the output above for details."
+    }
 }
 finally
 {
