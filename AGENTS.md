@@ -1,52 +1,36 @@
-# AGENTS.md
+# AGENTS.md (project: therapycove)
 
-## Agent entrypoints
-- Always read `AGENT_ENTRYPOINTS.md` early; it is the repo-local index for key files and commands.
+This repo-local file overrides `.codex/AGENTS.md` for Therapy Cove.
 
-## Project identity
-- Therapy Cove is a modern mental health center in Athens, serving adults.
-- The site represents a real practice with three practicing psychologists and must communicate trust, calm, and professionalism.
-- Domain reference: https://therapycove.gr
+## Purpose
+Jekyll + Jekyll Polyglot site for the Athens mental health practice. Keep the calm, supportive, bilingual presentation consistent with the current brand.
 
-## Version control
-- We use **Conventional Commits** for every change.
-- Prefer **small, incremental commits**; each development step should be a commit when feasible.
-- Branch names are descriptive and purpose-based (e.g., `live/therapycove-site`).
+## Read first
+- `AGENT_ENTRYPOINTS.md`
+- `README.md`
+- `_config.yml`
+- `_config.local.yml`
+- `Gemfile`
+- `_includes/seo.html`
+- `_includes/contact.html`
+- `assets/css/therapy-cove.css`
 
-## UI/UX standards
-- Follow modern UI/UX best practices: clarity, accessibility, hierarchy, whitespace, readable typography, and mobile-first responsiveness.
-- Avoid visual noise; prioritize calm, empathetic presentation appropriate for a mental health brand.
-- Keep forms simple and clear; label fields explicitly and minimize friction.
+## Stack / invariants
+- Jekyll + Jekyll Polyglot.
+- Content lives in `_data/gr/cove` and `_data/en/cove`.
+- Styles are bundled through `assets/css/therapy-cove.css`; `npm run build:css` updates `assets/css/site.bundle.css`.
+- GitHub Pages compatible; avoid unsupported plugins.
+- Keep copy, section order, and tone aligned with the current Therapy Cove practice model and the three-psychologist setup.
+- Conventional Commits and small increments remain the default.
+- Decap CMS config should stay flexible for the current local/prod workflow.
 
-## Jekyll conventions
-- Keep content in `_data/` and templates in `_includes/` and `_layouts/`.
-- Prefer content-driven sections and avoid hardcoded copy in templates.
-- Keep assets organized and named descriptively.
-- Respect GitHub Pages compatibility (no unsupported plugins).
+## Commands
+- `pwsh ./scripts/dev.ps1`
+- `bundle exec jekyll serve --config _config.yml,_config.local.yml`
+- `npm run build:css`
+- `npm install` (installs hooks / prepare)
 
-## CMS (Decap)
-- Decap CMS is used for all editable content.
-- Content fields should favor rich text/markdown where helpful.
-- We plan to add **free** login (e.g., Netlify Identity or GitHub OAuth) later; keep CMS config flexible for that change.
-
-## Clean code + DDD (pragmatic)
-- Use descriptive names that read like prose, even if long.
-- Names should reflect the project’s **ubiquitous language** (Therapy Cove, sessions, therapists, approaches, contact, etc.).
-- Keep the structure simple; apply DDD ideas where they add clarity, not complexity.
-
-## Content alignment
-- Copy and structure should reflect the existing Therapy Cove tone and content.
-- The site must consistently present a modern, supportive mental health center with three psychologists operating the space.
-
-## Current site state (as of 2026-02-03)
-- Layout sections are defined in `_includes/`: hero (`#home`), audiences (`#audiences`), therapists (`#therapists`), approaches (`#approaches`), contact (`#contact`), footer.
-- Localization is enabled via `jekyll-polyglot` with content split per section/entity under `_data/gr/cove/` (Greek) and `_data/en/cove/` (English placeholders).
-- Language toggle is controlled by `_config.yml` `flags.show_lang_toggle` (currently `false`).
-- Navigation uses `assets/images/log-vector.svg` in the header and drawer; hero + footer use `assets/images/therapy-cove-logo.png`.
-- Styles are a mix of Pico CSS (CDN), custom CSS (`assets/css/base.css`, `assets/css/layout.css`, `assets/css/modules.css` via `assets/css/therapy-cove.css`), and a Tailwind build (`assets/css/tailwind-build.css`) with Flowbite plugin utilities.
-- Flowbite JS is loaded locally from `assets/vendor/flowbite/flowbite.min.js`.
-- Fonts are self-hosted via `assets/css/fonts.css` (Fraunces + Sora) with Greek typography using a Helvetica-based stack in `assets/css/base.css` and language-based overrides.
-- Core palette variables live in `assets/css/base.css`: `--cove-charcoal` (#333333), `--cove-ivory` (#F9ECCF), `--cove-ocean-flow` (#9DC6AA) plus RGB/soft variants.
-- Approaches interaction/scroll locking logic is handled in `assets/js/approaches-tabs.js` (wheel-lock on desktop, Scrollama on coarse pointers).
-- Anchor centering logic lives in `assets/js/anchor-center.js`; mobile drawer close behavior in `assets/js/nav-drawer.js`.
-- SEO uses `jekyll-seo-tag`/`jekyll-sitemap` plus `_includes/seo.html`, with OG image in `assets/images/og-therapy-cove.png` and favicon assets in `assets/images/favicon*`.
+## Verification
+- If styles changed, run `npm run build:css` and commit the bundle.
+- If layout or content changed, verify the relevant pages in the Jekyll server.
+- If CMS or config changed, keep `README.md` and `AGENT_ENTRYPOINTS.md` in sync with the current workflow.
